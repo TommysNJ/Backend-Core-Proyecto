@@ -1,6 +1,6 @@
 import InstructorModel from "../models/InstructorModel.js";
 
-// Crear un instructor (solo administrador)
+// Crear un instructor (solo administrador), no va a ser necesario
 export const createInstructor = async (req, res) => {
     try {
         const { email, nombre, fecha_nacimiento, profesion, titulo_profesional } = req.body;
@@ -49,7 +49,7 @@ export const updateInstructor = async (req,
     }
 };
 
-// Eliminar un instructor (solo administrador)
+// Eliminar un instructor (solo administrador), no va a ser necesario
 export const deleteInstructor = async (req, res) => {
     try {
         const { email } = req.params;

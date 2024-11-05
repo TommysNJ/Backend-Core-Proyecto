@@ -1,6 +1,6 @@
 import AlumnoModel from "../models/AlumnoModel.js";
 
-// Crear un alumno (solo administrador)
+// Crear un alumno (solo administrador), no va a ser necesario
 export const createAlumno = async (req, res) => {
     try {
         const { email, nombre/*, fecha_nacimiento*/, genero, edad, nivel_educacion } = req.body;
@@ -47,7 +47,7 @@ export const updateAlumno = async (req, res) => {
     }
 };
 
-// Eliminar un alumno (solo administrador)
+// Eliminar un alumno (solo administrador), no va a ser necesario
 export const deleteAlumno = async (req, res) => {
     try {
         const { email } = req.params;

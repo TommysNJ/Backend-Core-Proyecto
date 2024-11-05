@@ -2,7 +2,7 @@ import UserModel from "../models/UserModel.js";
 import AlumnoModel from "../models/AlumnoModel.js";
 import InstructorModel from "../models/InstructorModel.js";
 import AdminModel from "../models/AdminModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // Método para registrar un nuevo usuario (alumno, instructor)

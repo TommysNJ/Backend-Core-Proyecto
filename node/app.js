@@ -46,7 +46,13 @@ ProgresoModel.belongsTo(InscriptionModel, { foreignKey: 'id_inscripcion' });
 
 const app = express();
 
-app.use(cors());
+//app.use(cors());
+app.use(cors({
+    origin: '*', // Permitir todas las solicitudes
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 // Rutas para autenticación

@@ -36,6 +36,7 @@ export const loginUser = async (req, res) => {
         const user = await UserModel.findByPk(email);
         if (user && await bcrypt.compare(password, user.password)) {
             let userInfo;
+            let rolInfo;
             if (user.role_id === 1) { // Alumno
                 userInfo = await AlumnoModel.findByPk(email);
                 rolInfo = await UserModel.findByPk(email).role_id;

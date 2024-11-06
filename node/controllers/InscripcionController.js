@@ -28,10 +28,37 @@ export const createInscripcion = async (req, res) => {
 };
 
 // Ver todas las inscripciones de un alumno (solo alumno)
-export const getInscripcionesAlumno = async (req, res) => {
+/*export const getInscripcionesAlumno = async (req, res) => {
     try {
         const { email_alumno } = req.params;
         const inscripciones = await InscriptionModel.findAll({ where: { email_alumno } });
+        res.json(inscripciones);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+export const getInscripcionesAlumno = async (req, res) => {
+    try {
+        const { email_alumno } = req.params;
+        const inscripciones = await InscriptionModel.findAll({
+            where: { email_alumno },
+            include: [
+                {
+                    model: CourseModel,
+                    attributes: ['nombre', 'descripcion'], // Atributos del curso
+                    include: [
+                        {
+                            model: TemaModel,
+                            attributes: ['tipo'] // Atributo del tema
+                        },
+                        {
+                            model: InstructorModel,
+                            attributes: ['email', 'nombre'] // Atributos del instructor
+                        }
+                    ]
+                }
+            ]
+        });
         res.json(inscripciones);
     } catch (error) {
         res.status(500).json({ message: error.message });

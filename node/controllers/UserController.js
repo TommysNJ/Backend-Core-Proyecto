@@ -38,14 +38,17 @@ export const loginUser = async (req, res) => {
             let userInfo;
             if (user.role_id === 1) { // Alumno
                 userInfo = await AlumnoModel.findByPk(email);
+                rolInfo = await UserModel.findByPk(email).role_id;
             } else if (user.role_id === 2) { // Instructor
                 userInfo = await InstructorModel.findByPk(email);
+                rolInfo = await UserModel.findByPk(email).role_id;
             } else if (user.role_id === 3) { // Administrador
                 userInfo = await AdminModel.findByPk(email);
+                rolInfo = await UserModel.findByPk(email).role_id;
             }
 
             const token = jwt.sign({ email: user.email, role: user.role_id }, 'secret_key', { expiresIn: '1h' });
-            res.json({ token, userInfo });
+            res.json({ token, userInfo, rolInfo});
         } else {
             res.status(401).json({ message: "Credenciales inválidas" });
         }

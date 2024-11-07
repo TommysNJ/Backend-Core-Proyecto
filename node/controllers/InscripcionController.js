@@ -1,7 +1,8 @@
 import InscriptionModel from "../models/InscriptionModel.js";
 import moment from 'moment-timezone';
-import CourseModel from '../models/CourseModel.js'; // Importar el modelo de cursos
-import InstructorModel from '../models/InstructorModel.js'; // Importar el modelo de instructores
+import CourseModel from "../models/CourseModel.js";
+import TemaModel from "../models/TemaModel.js";
+import InstructorModel from "../models/InstructorModel.js";
 
 // Inscribirse a un curso (solo alumno)
 export const createInscripcion = async (req, res) => {
@@ -39,8 +40,6 @@ export const createInscripcion = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };*/
-
-// Ver todas las inscripciones de un alumno (solo alumno)
 export const getInscripcionesAlumno = async (req, res) => {
     try {
         const { email_alumno } = req.params;
@@ -49,17 +48,19 @@ export const getInscripcionesAlumno = async (req, res) => {
             include: [
                 {
                     model: CourseModel,
-                    as: 'curso', // Este alias debe coincidir con el definido en las asociaciones
+                    attributes: ['nombre', 'descripcion'], // Atributos del curso
                     include: [
                         {
-                            model: InstructorModel,
-                            as: 'instructores', // Este alias debe coincidir con el definido en las asociaciones
-                            attributes: ['nombre', 'email', 'profesion'], // Incluye solo los atributos necesarios
+                            model: TemaModel,
+                            attributes: ['tipo'] // Atributo del tema
                         },
-                    ],
-                    attributes: ['nombre', 'descripcion', 'id_curso'], // Incluye solo los atributos necesarios
-                },
-            ],
+                        {
+                            model: InstructorModel,
+                            attributes: ['email', 'nombre'] // Atributos del instructor
+                        }
+                    ]
+                }
+            ]
         });
         res.json(inscripciones);
     } catch (error) {

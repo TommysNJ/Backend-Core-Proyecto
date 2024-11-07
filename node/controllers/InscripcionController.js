@@ -48,15 +48,17 @@ export const getInscripcionesAlumno = async (req, res) => {
             include: [
                 {
                     model: CourseModel,
-                    attributes: ['nombre', 'descripcion'], // Atributos del curso
+                    as: 'curso',
+                    attributes: ['nombre', 'descripcion'],
                     include: [
                         {
-                            model: TemaModel,
-                            attributes: ['tipo'] // Atributo del tema
+                            model: InstructorModel,
+                            as: 'instructor',
+                            attributes: ['nombre', 'email']
                         },
                         {
-                            model: InstructorModel,
-                            attributes: ['email', 'nombre'] // Atributos del instructor
+                            model: TemaModel,
+                            attributes: ['tipo']
                         }
                     ]
                 }

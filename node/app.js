@@ -25,8 +25,8 @@ AlumnoModel.hasMany(InscriptionModel, { foreignKey: 'email_alumno' });
 InscriptionModel.belongsTo(AlumnoModel, { foreignKey: 'email_alumno' });
 
 // Relación: Instructor - Curso (1-N)
-InstructorModel.hasMany(CourseModel, { foreignKey: 'email_instructor' });
-CourseModel.belongsTo(InstructorModel, { foreignKey: 'email_instructor' });
+InstructorModel.hasMany(CourseModel, { foreignKey: 'email_instructor', as: 'cursos' });
+CourseModel.belongsTo(InstructorModel, { foreignKey: 'email_instructor', as: 'instructor' });
 
 // Relación: Curso - Inscripción (1-N)
 CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso' });

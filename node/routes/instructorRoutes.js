@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/', verifyToken, verifyRole([3]), createInstructor); // no va a ser necesario
 router.get('/', verifyToken, verifyRole([3]), getAllInstructors);
 router.get('/:email', verifyToken, verifyRole([3, 2]), getInstructorByEmail); // Ver un instructor por su email
-router.put('/:email', verifyToken, verifyRole([3]), updateInstructor);
+router.put('/:email', verifyToken, verifyRole([3, 2]), updateInstructor);
 router.delete('/:email', verifyToken, verifyRole([3]), deleteInstructor); // no va a ser necesario
 
 export default router;

@@ -40,7 +40,7 @@ export const getCourseById = async (req, res) => {
 };
 
 // Ver cursos de un instructor (solo instructor)
-/*export const getInstructorCourses = async (req, res) => {
+export const getInstructorCourses = async (req, res) => {
     try {
         const { email } = req.params;
         const courses = await CourseModel.findAll({ where: { email_instructor: email } });
@@ -48,9 +48,9 @@ export const getCourseById = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};*/
+};
 
-export const getInstructorCourses = async (req, res) => {
+/*export const getInstructorCourses = async (req, res) => {
     try {
         const { email_instructor } = req.params;
         const courses = await CourseModel.findAll({ 
@@ -67,7 +67,7 @@ export const getInstructorCourses = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+};*/
 
 // Editar un curso (solo administrador)
 export const updateCourse = async (req, res) => {

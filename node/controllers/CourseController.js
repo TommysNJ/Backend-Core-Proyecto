@@ -16,14 +16,38 @@ export const createCourse = async (req, res) => {
 };
 
 // Ver todos los cursos (solo administrador e instructor)
-export const getAllCourses = async (req, res) => {
+/*export const getAllCourses = async (req, res) => {
     try {
         const courses = await CourseModel.findAll();
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};*/
+
+export const getAllCourses = async (req, res) => {
+    try {
+        const courses = await CourseModel.findAll({
+            where: { email_alumno },
+            include: [
+                {
+                    model: InstructorModel,
+                    as: 'instructor',
+                    attributes: ['nombre', 'email']
+                },
+                {
+                    model: TemaModel,
+                    as: 'tema',
+                    attributes: ['tipo', 'descripcion']
+                }
+            ]
+        });
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
+
 
 // Ver un curso por su ID (solo administrador e instructor)
 export const getCourseById = async (req, res) => {

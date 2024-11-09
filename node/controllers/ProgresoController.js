@@ -25,3 +25,20 @@ export const getProgreso = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Eliminar progreso por id_detalle (solo alumno)
+export const deleteProgreso = async (req, res) => {
+    try {
+        const { id_detalle } = req.params;
+        const progreso = await ProgresoModel.findByPk(id_detalle);
+        
+        if (!progreso) {
+            return res.status(404).json({ message: "Progreso no encontrado" });
+        }
+        
+        await ProgresoModel.destroy({ where: { id_detalle } });
+        res.json({ message: "Progreso eliminado correctamente" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

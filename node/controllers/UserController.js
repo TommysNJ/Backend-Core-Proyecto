@@ -14,7 +14,7 @@ export const registerUser = async (req, res) => {
         await UserModel.create({ email, password: hashedPassword, role_id });
 
         if (role_id === 1) { // Rol de Alumno
-            await AlumnoModel.create({ email, nombre, fecha_nacimiento, genero, edad, nivel_educacion });
+            await AlumnoModel.create({ email, nombre/*, fecha_nacimiento*/, genero, edad, nivel_educacion });
         } else if (role_id === 2) { // Rol de Instructor
             await InstructorModel.create({ email, nombre, fecha_nacimiento, profesion, titulo_profesional });
         } else if (role_id === 3) {  // Rol de Administrador

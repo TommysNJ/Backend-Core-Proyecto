@@ -33,8 +33,8 @@ CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso' });
 InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso' });
 
 // Relación: Tema - Curso (1-N)
-TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', 'cursos' });
-CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', 'tema' });
+TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', as: 'cursos' });
+CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' });
 
 // Relación: Inscripción - Calificación (1-1)
 InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion' });

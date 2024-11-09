@@ -12,7 +12,7 @@ router.put('/:id', verifyToken, verifyRole([3]), updateCourse);
 router.delete('/:id', verifyToken, verifyRole([3]), deleteCourse);
 
 // Instructores pueden ver sus propios cursos y los alumnos inscritos en ellos
-router.get('/instructor/:email', verifyToken, verifyRole([2]), getInstructorCourses);
+router.get('/instructor/:email', verifyToken, verifyRole([3, 2]), getInstructorCourses);
 router.get('/students/:id_curso', verifyToken, verifyRole([2]), getCourseStudents);
 
 export default router;

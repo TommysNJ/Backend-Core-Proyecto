@@ -39,7 +39,7 @@ export const getCourseById = async (req, res) => {
     }
 };
 
-// Ver cursos de un instructor (solo instructor)
+// Ver cursos de un instructor (instructor y administrador)
 export const getInstructorCourses = async (req, res) => {
     try {
         const { email } = req.params;

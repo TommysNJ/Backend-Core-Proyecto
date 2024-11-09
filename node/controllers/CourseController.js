@@ -2,6 +2,7 @@ import CourseModel from "../models/CourseModel.js";
 import InstructorModel from "../models/InstructorModel.js";
 import AlumnoModel from "../models/AlumnoModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
+import TemaModel from "../models/TemaModel.js";
 
 // Crear un curso (solo administrador)
 export const createCourse = async (req, res) => {
@@ -39,10 +40,29 @@ export const getCourseById = async (req, res) => {
 };
 
 // Ver cursos de un instructor (solo instructor)
-export const getInstructorCourses = async (req, res) => {
+/*export const getInstructorCourses = async (req, res) => {
     try {
         const { email } = req.params;
         const courses = await CourseModel.findAll({ where: { email_instructor: email } });
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+
+export const getInstructorCourses = async (req, res) => {
+    try {
+        const { email_instructor } = req.params;
+        const courses = await CourseModel.findAll({ 
+            where: { email_instructor},
+            include: [
+                {
+                    model: TemaModel,
+                    as: 'tema',
+                    attributes: ['tipo', 'descripcion']
+                }
+            ]
+        });
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });

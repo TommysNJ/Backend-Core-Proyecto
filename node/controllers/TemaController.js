@@ -1,4 +1,5 @@
 import TemaModel from "../models/TemaModel.js";
+import CourseModel from "../models/CourseModel.js";
 
 // Crear un tema (solo administrador)
 export const createTema = async (req, res) => {

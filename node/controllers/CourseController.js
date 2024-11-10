@@ -63,10 +63,33 @@ export const getCourseById = async (req, res) => {
 };
 
 // Ver cursos de un instructor (instructor y administrador)
-export const getInstructorCourses = async (req, res) => {
+/*export const getInstructorCourses = async (req, res) => {
     try {
         const { email } = req.params;
         const courses = await CourseModel.findAll({ where: { email_instructor: email } });
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+export const getInstructorCourses = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const courses = await CourseModel.findAll({ 
+            where: { email_instructor: email },
+            include: [
+                {
+                    model: InstructorModel,
+                    as: 'instructor',
+                    attributes: ['nombre', 'email']
+                },
+                {
+                    model: TemaModel,
+                    as: 'tema',
+                    attributes: ['tipo', 'descripcion']
+                }
+            ]
+        });
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: error.message });

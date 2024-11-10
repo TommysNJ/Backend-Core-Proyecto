@@ -12,7 +12,7 @@ export const createTema = async (req, res) => {
 };
 
 // Ver todos los temas (solo administrador)
-export const getAllTemas = async (req, res) => {
+/*export const getAllTemas = async (req, res) => {
     try {
         const temas = await TemaModel.findAll();
         res.json(temas);
@@ -26,6 +26,44 @@ export const getTemaById = async (req, res) => {
     try {
         const { id } = req.params;
         const tema = await TemaModel.findByPk(id);
+        if (!tema) {
+            return res.status(404).json({ message: "Tema no encontrado" });
+        }
+        res.json(tema);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+export const getAllTemas = async (req, res) => {
+    try {
+        const temas = await TemaModel.findAll({
+            include: [
+                {
+                    model: CourseModel,
+                    as: 'cursos', // Utiliza el alias definido en la relación
+                    attributes: ['id_curso', 'nombre', 'descripcion'], // Especifica los campos que deseas de CourseModel
+                }
+            ]
+        });
+        res.json(temas);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Ver un tema por su ID con sus cursos (solo administrador)
+export const getTemaById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tema = await TemaModel.findByPk(id, {
+            include: [
+                {
+                    model: CourseModel,
+                    as: 'cursos', // Utiliza el alias definido en la relación
+                    attributes: ['id_curso', 'nombre', 'descripcion'],
+                }
+            ]
+        });
         if (!tema) {
             return res.status(404).json({ message: "Tema no encontrado" });
         }

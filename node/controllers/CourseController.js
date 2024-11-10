@@ -28,7 +28,6 @@ export const createCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
     try {
         const courses = await CourseModel.findAll({
-            where: { email_alumno },
             include: [
                 {
                     model: InstructorModel,

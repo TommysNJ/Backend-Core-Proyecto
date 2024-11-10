@@ -58,6 +58,7 @@ export const getInscripcionesAlumno = async (req, res) => {
                         },
                         {
                             model: TemaModel,
+                            as: 'tema',
                             attributes: ['tipo']
                         }
                     ]

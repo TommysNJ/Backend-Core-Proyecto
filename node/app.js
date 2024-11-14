@@ -23,23 +23,23 @@ import reportRoutes from './routes/reportRoutes.js';
 // Relacionar modelos en app.js
 // Relación: Alumno - Inscripción (1-N)
 AlumnoModel.hasMany(InscriptionModel, { foreignKey: 'email_alumno' });
-InscriptionModel.belongsTo(AlumnoModel, { foreignKey: 'email_alumno', as: 'alumno' });
+InscriptionModel.belongsTo(AlumnoModel, { foreignKey: 'email_alumno'});
 
 // Relación: Instructor - Curso (1-N)
 InstructorModel.hasMany(CourseModel, { foreignKey: 'email_instructor', as: 'cursos' });
 CourseModel.belongsTo(InstructorModel, { foreignKey: 'email_instructor', as: 'instructor' });
 
 // Relación: Curso - Inscripción (1-N)
-CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso', as: 'inscripciones' });
-InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso', as: 'curso' });
+CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso' });
+InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso' });
 
 // Relación: Tema - Curso (1-N)
 TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', as: 'cursos' });
 CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' });
 
 // Relación: Inscripción - Calificación (1-1)
-InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion', as: 'calificacion' });
-CalificacionModel.belongsTo(InscriptionModel, { foreignKey: 'id_inscripcion', as: 'inscripcion' });
+InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion' });
+CalificacionModel.belongsTo(InscriptionModel, { foreignKey: 'id_inscripcion' });
 
 // Relación: Inscripción - Progreso (1-N)
 InscriptionModel.hasMany(ProgresoModel, { foreignKey: 'id_inscripcion' });

@@ -16,7 +16,7 @@ export const getCalificacionesPorGeneroEdad = async (req, res) => {
         const calificaciones = await CalificacionModel.findAll({
             attributes: [
                 [fn('AVG', col('puntuacion')), 'promedio_calificacion'],
-                [col('alumno.genero'), 'genero']
+                [col('alumnos.genero'), 'genero']
             ],
             include: [
                 {
@@ -39,7 +39,7 @@ export const getCalificacionesPorGeneroEdad = async (req, res) => {
                     ]
                 }
             ],
-            group: ['alumno.genero'],
+            group: ['alumnos.genero'],
         });
 
         res.json(calificaciones);

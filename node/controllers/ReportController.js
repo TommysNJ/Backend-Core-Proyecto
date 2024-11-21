@@ -5,85 +5,82 @@ import CalificacionModel from "../models/CalificacionModel.js";
 
 export const getPopularidadTemas = async (req, res) => {
     try {
-        // Obtener datos de todas las temáticas, cursos, inscripciones y calificaciones
+        // Obtener los temas junto con las inscripciones y calificaciones
         const temas = await TemaModel.findAll({
             include: [
                 {
                     model: CourseModel,
-                    as: "cursos",
+                    as: 'cursos',
+                    attributes: ['id_curso'],
                     include: [
                         {
                             model: InscriptionModel,
-                            as: "inscripciones",
+                            as: 'inscripciones',
+                            attributes: ['id_inscripcion'],
                             include: [
                                 {
                                     model: CalificacionModel,
-                                    as: "calificaciones",
-                                    attributes: ["puntuacion"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
+                                    as: 'calificaciones',
+                                    attributes: ['puntuacion']
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         });
 
-        // Total general de estudiantes inscritos
-        let totalEstudiantesGlobal = 0;
-        temas.forEach((tema) => {
-            tema.cursos.forEach((curso) => {
-                totalEstudiantesGlobal += curso.inscripciones.length;
-            });
-        });
+        // Calcular el total de inscripciones
+        const totalInscripciones = temas.reduce((total, tema) => {
+            const inscripcionesTema = tema.cursos.reduce((cursoTotal, curso) => {
+                return cursoTotal + curso.inscripciones.length;
+            }, 0);
+            return total + inscripcionesTema;
+        }, 0);
 
-        // Procesar datos por temática
-        const resultados = temas.map((tema) => {
-            let totalEstudiantesTema = 0;
-            let sumaCalificaciones = 0;
-            let totalCalificaciones = 0;
+        // Calcular la popularidad de cada tema
+        const popularidadTemas = temas.map((tema) => {
+            const totalInscripcionesTema = tema.cursos.reduce((cursoTotal, curso) => {
+                return cursoTotal + curso.inscripciones.length;
+            }, 0);
 
-            // Recorrer cursos de la temática
-            tema.cursos.forEach((curso) => {
-                totalEstudiantesTema += curso.inscripciones.length;
+            // Calcular el promedio de calificaciones solo para inscripciones con calificaciones
+            const totalPromedios = tema.cursos.reduce((sumaPromedios, curso) => {
+                const totalCalificaciones = curso.inscripciones.reduce((suma, inscripcion) => {
+                    const calificaciones = inscripcion.calificaciones.filter((c) => c.puntuacion !== null);
+                    return suma + calificaciones.reduce((sum, c) => sum + c.puntuacion, 0);
+                }, 0);
 
-                curso.inscripciones.forEach((inscripcion) => {
-                    const calificaciones = inscripcion.calificaciones || [];
-                    calificaciones.forEach((calificacion) => {
-                        sumaCalificaciones += parseFloat(calificacion.puntuacion || 0);
-                        totalCalificaciones++;
-                    });
-                });
-            });
+                const totalInscripcionesConCalificacion = curso.inscripciones.reduce((count, inscripcion) => {
+                    return count + inscripcion.calificaciones.filter((c) => c.puntuacion !== null).length;
+                }, 0);
 
-            // Calcular promedio de calificaciones y porcentaje de estudiantes
-            const promedioCalificacion =
-                totalCalificaciones > 0
-                    ? sumaCalificaciones / totalCalificaciones
+                const promedioCurso = totalInscripcionesConCalificacion > 0
+                    ? totalCalificaciones / totalInscripcionesConCalificacion
                     : 0;
 
-            const porcentajeEstudiantes =
-                totalEstudiantesGlobal > 0
-                    ? (totalEstudiantesTema / totalEstudiantesGlobal) * 100
-                    : 0;
+                return sumaPromedios + promedioCurso;
+            }, 0);
 
-            // Combinar ambos factores en un índice de popularidad
-            const popularidad =
-                promedioCalificacion * 0.7 + porcentajeEstudiantes * 0.3;
+            const promedioCalificaciones = totalPromedios / (tema.cursos.length || 1);
+
+            const porcentajeInscripciones = ((totalInscripcionesTema / (totalInscripciones || 1)) * 100).toFixed(2);
+
+            const indicePopularidad = (promedioCalificaciones * 0.7) + (porcentajeInscripciones * 0.3);
 
             return {
-                tipo: tema.tipo,
+                tema: tema.tipo,
                 descripcion: tema.descripcion,
-                estudiantes: totalEstudiantesTema,
-                promedioCalificacion: promedioCalificacion.toFixed(2),
-                porcentajeEstudiantes: porcentajeEstudiantes.toFixed(2),
-                indicePopularidad: popularidad.toFixed(2),
+                promedioCalificaciones: promedioCalificaciones.toFixed(2),
+                porcentajeInscripciones,
+                indicePopularidad: indicePopularidad.toFixed(2)
             };
         });
 
         // Ordenar por índice de popularidad descendente
-        resultados.sort((a, b) => b.indicePopularidad - a.indicePopularidad);
+        popularidadTemas.sort((a, b) => b.indicePopularidad - a.indicePopularidad);
 
-        res.json(resultados);
+        res.json(popularidadTemas);
     } catch (error) {
         console.error("Error generando el reporte de popularidad:", error);
         res.status(500).json({ message: "Error generando el reporte de popularidad" });

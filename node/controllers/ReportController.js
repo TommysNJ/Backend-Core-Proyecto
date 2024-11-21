@@ -3,26 +3,21 @@ import CourseModel from "../models/CourseModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
 import CalificacionModel from "../models/CalificacionModel.js";
 
-export const getPopularidadTemas = async (req, res) => {
+export const getReportePopularidadTemas = async (req, res) => {
     try {
-        // Obtener las calificaciones con sus relaciones correctas
         const calificaciones = await CalificacionModel.findAll({
-            attributes: ['puntuacion'], // Solo obtenemos las puntuaciones
             include: [
                 {
                     model: InscriptionModel,
                     as: 'inscripcion',
-                    attributes: ['id_inscripcion'], // Información mínima de la inscripción
                     include: [
                         {
                             model: CourseModel,
                             as: 'curso',
-                            attributes: ['id_tema'], // Solo necesitamos el ID del tema
                             include: [
                                 {
                                     model: TemaModel,
-                                    as: 'tema',
-                                    attributes: ['id_tema', 'tipo', 'descripcion'] // Detalles del tema
+                                    as: 'tema'
                                 }
                             ]
                         }
@@ -31,16 +26,14 @@ export const getPopularidadTemas = async (req, res) => {
             ]
         });
 
-        // Crear un mapa para organizar los datos por tema
         const temaData = {};
 
-        calificaciones.forEach((calificacion) => {
+        for (const calificacion of calificaciones) {
             const tema = calificacion.inscripcion.curso.tema;
-            if (!tema) return; // Saltamos si no hay tema asociado
+            const temaKey = tema.id_tema;
 
-            // Inicializar datos del tema si no existen
-            if (!temaData[tema.id_tema]) {
-                temaData[tema.id_tema] = {
+            if (!temaData[temaKey]) {
+                temaData[temaKey] = {
                     tipo: tema.tipo,
                     descripcion: tema.descripcion,
                     totalCalificaciones: 0,
@@ -49,32 +42,53 @@ export const getPopularidadTemas = async (req, res) => {
                 };
             }
 
-            // Agregar datos al tema correspondiente
-            temaData[tema.id_tema].totalCalificaciones += 1;
-            temaData[tema.id_tema].sumaPuntuaciones += calificacion.puntuacion || 0;
-            temaData[tema.id_tema].totalInscripciones += 1; // Cada calificación corresponde a una inscripción
-        });
+            const temaEntry = temaData[temaKey];
 
-        // Calcular el índice de popularidad para cada tema
-        const totalInscripcionesGlobal = Object.values(temaData).reduce((sum, tema) => sum + tema.totalInscripciones, 0);
+            // Agregar datos de inscripciones y calificaciones
+            temaEntry.totalInscripciones += 1;
 
-        const popularidadTemas = Object.values(temaData).map((tema) => {
-            const promedioCalificaciones = tema.sumaPuntuaciones / (tema.totalCalificaciones || 1);
-            const porcentajeInscripciones = ((tema.totalInscripciones / (totalInscripcionesGlobal || 1)) * 100).toFixed(2);
+            if (calificacion.puntuacion !== null) {
+                temaEntry.totalCalificaciones += 1;
+                temaEntry.sumaPuntuaciones += parseFloat(calificacion.puntuacion);
+            }
+        }
+
+        const totalInscripcionesGlobal = Object.values(temaData).reduce(
+            (sum, tema) => sum + tema.totalInscripciones,
+            0
+        );
+
+        const reporte = Object.values(temaData).map(tema => {
+            const promedioCalificaciones =
+                tema.totalCalificaciones > 0
+                    ? (tema.sumaPuntuaciones / tema.totalCalificaciones).toFixed(2)
+                    : 0;
+
+            const porcentajeInscripciones = (
+                (tema.totalInscripciones / totalInscripcionesGlobal) *
+                100
+            ).toFixed(2);
+
+            const indicePopularidad = (
+                (parseFloat(promedioCalificaciones) / 10) * // Calificación máxima es 10
+                parseFloat(porcentajeInscripciones)
+            ).toFixed(2);
 
             return {
                 tipo: tema.tipo,
                 descripcion: tema.descripcion,
-                promedioCalificaciones: promedioCalificaciones.toFixed(2),
+                promedioCalificaciones,
                 porcentajeInscripciones: `${porcentajeInscripciones}%`,
-                indicePopularidad: ((promedioCalificaciones * 0.7) + (porcentajeInscripciones * 0.3)).toFixed(2)
+                indicePopularidad
             };
         });
 
-        // Ordenar por índice de popularidad descendente
-        popularidadTemas.sort((a, b) => b.indicePopularidad - a.indicePopularidad);
+        // Ordenar en orden descendente por índice de popularidad
+        const reporteOrdenado = reporte.sort(
+            (a, b) => parseFloat(b.indicePopularidad) - parseFloat(a.indicePopularidad)
+        );
 
-        res.json(popularidadTemas);
+        res.json(reporteOrdenado);
     } catch (error) {
         console.error("Error generando el reporte de popularidad:", error);
         res.status(500).json({ message: "Error generando el reporte de popularidad" });

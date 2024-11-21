@@ -113,3 +113,70 @@ export const getPopularidadTemas = async (req, res) => {
         res.status(500).json({ message: "Error generando el reporte de popularidad" });
     }
 };
+
+// Método para calcular el porcentaje total de inscripciones por temática
+export const getPorcentajeInscripcionesPorTematica = async (req, res) => {
+    try {
+        // Obtener todas las inscripciones con sus cursos y temáticas
+        const inscripciones = await InscriptionModel.findAll({
+            include: [
+                {
+                    model: CourseModel,
+                    as: 'curso',
+                    include: [
+                        {
+                            model: TemaModel,
+                            as: 'tema'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        // Calcular el total de inscripciones
+        const totalInscripcionesGlobal = inscripciones.length;
+
+        // Agrupar inscripciones por temática
+        const temaData = {};
+
+        for (const inscripcion of inscripciones) {
+            const tema = inscripcion.curso.tema;
+            const temaKey = tema.id_tema;
+
+            if (!temaData[temaKey]) {
+                temaData[temaKey] = {
+                    tipo: tema.tipo,
+                    descripcion: tema.descripcion,
+                    totalInscripciones: 0
+                };
+            }
+
+            temaData[temaKey].totalInscripciones += 1;
+        }
+
+        // Generar el reporte con porcentajes
+        const reporte = Object.values(temaData).map(tema => {
+            const porcentajeInscripciones =
+                (tema.totalInscripciones / totalInscripcionesGlobal) * 100;
+
+            return {
+                tipo: tema.tipo,
+                descripcion: tema.descripcion,
+                totalInscripciones: tema.totalInscripciones,
+                porcentajeInscripciones: `${porcentajeInscripciones.toFixed(2)}%`
+            };
+        });
+
+        // Ordenar por porcentaje de inscripciones en orden descendente
+        const reporteOrdenado = reporte.sort(
+            (a, b) =>
+                parseFloat(b.porcentajeInscripciones.replace('%', '')) -
+                parseFloat(a.porcentajeInscripciones.replace('%', ''))
+        );
+
+        res.json(reporteOrdenado);
+    } catch (error) {
+        console.error("Error generando el reporte de inscripciones por temática:", error);
+        res.status(500).json({ message: "Error generando el reporte de inscripciones por temática" });
+    }
+};

@@ -3,7 +3,7 @@ import CourseModel from "../models/CourseModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
 import CalificacionModel from "../models/CalificacionModel.js";
 
-export const getReportePopularidadTemas = async (req, res) => {
+export const getPopularidadTemas = async (req, res) => {
     try {
         // Obtener todas las calificaciones con las relaciones necesarias
         const calificaciones = await CalificacionModel.findAll({

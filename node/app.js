@@ -18,7 +18,7 @@ import alumnoRoutes from './routes/alumnoRoutes.js';
 import inscripcionRoutes from './routes/inscripcionRoutes.js';
 import calificacionRoutes from './routes/calificacionRoutes.js';
 import progresoRoutes from './routes/progresoRoutes.js';
-import reportRoutes from './routes/reportRoutes.js';
+//import reportRoutes from './routes/reportRoutes.js';
 
 // Relacionar modelos en app.js
 // Relación: Alumno - Inscripción (1-N)
@@ -65,7 +65,7 @@ app.use('/cursos', courseRoutes);
 app.use('/inscripciones', inscripcionRoutes);
 app.use('/calificaciones', calificacionRoutes);  // Rutas de calificaciones separadas
 app.use('/progresos', progresoRoutes);  
-app.use('/reports', reportRoutes);
+//app.use('/reports', reportRoutes);
 
 try {
     await db.authenticate();

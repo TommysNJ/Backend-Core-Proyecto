@@ -5,23 +5,24 @@ import CalificacionModel from "../models/CalificacionModel.js";
 
 export const getPopularidadTemas = async (req, res) => {
     try {
-        // Obtener los temas junto con las inscripciones y calificaciones
-        const temas = await TemaModel.findAll({
+        // Obtener las calificaciones con sus relaciones correctas
+        const calificaciones = await CalificacionModel.findAll({
+            attributes: ['puntuacion'], // Solo obtenemos las puntuaciones
             include: [
                 {
-                    model: CourseModel,
-                    as: 'cursos',
-                    attributes: ['id_curso'],
+                    model: InscriptionModel,
+                    as: 'inscripcion',
+                    attributes: ['id_inscripcion'], // Información mínima de la inscripción
                     include: [
                         {
-                            model: InscriptionModel,
-                            as: 'inscripciones',
-                            attributes: ['id_inscripcion'],
+                            model: CourseModel,
+                            as: 'curso',
+                            attributes: ['id_tema'], // Solo necesitamos el ID del tema
                             include: [
                                 {
-                                    model: CalificacionModel,
-                                    as: 'calificaciones',
-                                    attributes: ['puntuacion']
+                                    model: TemaModel,
+                                    as: 'tema',
+                                    attributes: ['id_tema', 'tipo', 'descripcion'] // Detalles del tema
                                 }
                             ]
                         }
@@ -30,50 +31,43 @@ export const getPopularidadTemas = async (req, res) => {
             ]
         });
 
-        // Calcular el total de inscripciones
-        const totalInscripciones = temas.reduce((total, tema) => {
-            const inscripcionesTema = tema.cursos.reduce((cursoTotal, curso) => {
-                return cursoTotal + curso.inscripciones.length;
-            }, 0);
-            return total + inscripcionesTema;
-        }, 0);
+        // Crear un mapa para organizar los datos por tema
+        const temaData = {};
 
-        // Calcular la popularidad de cada tema
-        const popularidadTemas = temas.map((tema) => {
-            const totalInscripcionesTema = tema.cursos.reduce((cursoTotal, curso) => {
-                return cursoTotal + curso.inscripciones.length;
-            }, 0);
+        calificaciones.forEach((calificacion) => {
+            const tema = calificacion.inscripcion.curso.tema;
+            if (!tema) return; // Saltamos si no hay tema asociado
 
-            // Calcular el promedio de calificaciones solo para inscripciones con calificaciones
-            const totalPromedios = tema.cursos.reduce((sumaPromedios, curso) => {
-                const totalCalificaciones = curso.inscripciones.reduce((suma, inscripcion) => {
-                    const calificaciones = inscripcion.calificaciones.filter((c) => c.puntuacion !== null);
-                    return suma + calificaciones.reduce((sum, c) => sum + c.puntuacion, 0);
-                }, 0);
+            // Inicializar datos del tema si no existen
+            if (!temaData[tema.id_tema]) {
+                temaData[tema.id_tema] = {
+                    tipo: tema.tipo,
+                    descripcion: tema.descripcion,
+                    totalCalificaciones: 0,
+                    sumaPuntuaciones: 0,
+                    totalInscripciones: 0
+                };
+            }
 
-                const totalInscripcionesConCalificacion = curso.inscripciones.reduce((count, inscripcion) => {
-                    return count + inscripcion.calificaciones.filter((c) => c.puntuacion !== null).length;
-                }, 0);
+            // Agregar datos al tema correspondiente
+            temaData[tema.id_tema].totalCalificaciones += 1;
+            temaData[tema.id_tema].sumaPuntuaciones += calificacion.puntuacion || 0;
+            temaData[tema.id_tema].totalInscripciones += 1; // Cada calificación corresponde a una inscripción
+        });
 
-                const promedioCurso = totalInscripcionesConCalificacion > 0
-                    ? totalCalificaciones / totalInscripcionesConCalificacion
-                    : 0;
+        // Calcular el índice de popularidad para cada tema
+        const totalInscripcionesGlobal = Object.values(temaData).reduce((sum, tema) => sum + tema.totalInscripciones, 0);
 
-                return sumaPromedios + promedioCurso;
-            }, 0);
-
-            const promedioCalificaciones = totalPromedios / (tema.cursos.length || 1);
-
-            const porcentajeInscripciones = ((totalInscripcionesTema / (totalInscripciones || 1)) * 100).toFixed(2);
-
-            const indicePopularidad = (promedioCalificaciones * 0.7) + (porcentajeInscripciones * 0.3);
+        const popularidadTemas = Object.values(temaData).map((tema) => {
+            const promedioCalificaciones = tema.sumaPuntuaciones / (tema.totalCalificaciones || 1);
+            const porcentajeInscripciones = ((tema.totalInscripciones / (totalInscripcionesGlobal || 1)) * 100).toFixed(2);
 
             return {
-                tema: tema.tipo,
+                tipo: tema.tipo,
                 descripcion: tema.descripcion,
                 promedioCalificaciones: promedioCalificaciones.toFixed(2),
-                porcentajeInscripciones,
-                indicePopularidad: indicePopularidad.toFixed(2)
+                porcentajeInscripciones: `${porcentajeInscripciones}%`,
+                indicePopularidad: ((promedioCalificaciones * 0.7) + (porcentajeInscripciones * 0.3)).toFixed(2)
             };
         });
 

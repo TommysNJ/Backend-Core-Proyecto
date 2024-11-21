@@ -66,14 +66,12 @@ export const getPopularidadTemas = async (req, res) => {
                     ? (tema.sumaPuntuaciones / tema.totalCalificaciones).toFixed(2)
                     : 0;
 
-            const porcentajeInscripciones = (
-                (tema.totalInscripciones / totalInscripcionesGlobal) *
-                100
-            ).toFixed(2);
+            const porcentajeInscripciones =
+                (tema.totalInscripciones / totalInscripcionesGlobal) * 100;
 
             const indicePopularidadBruto =
                 (parseFloat(promedioCalificaciones) / 10) * // Calificación máxima es 10
-                parseFloat(porcentajeInscripciones);
+                porcentajeInscripciones;
 
             totalIndices.push(indicePopularidadBruto);
 
@@ -81,7 +79,7 @@ export const getPopularidadTemas = async (req, res) => {
                 tipo: tema.tipo,
                 descripcion: tema.descripcion,
                 promedioCalificaciones,
-                porcentajeInscripciones: `${porcentajeInscripciones}%`,
+                porcentajeInscripciones: `${porcentajeInscripciones.toFixed(2)}%`,
                 indicePopularidadBruto: indicePopularidadBruto || 0 // Evitar NaN
             };
         });

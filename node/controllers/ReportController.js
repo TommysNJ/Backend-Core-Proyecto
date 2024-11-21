@@ -58,7 +58,9 @@ export const getPopularidadTemas = async (req, res) => {
             0
         );
 
-        const reporte = Object.values(temaData).map(tema => {
+        const totalIndices = [];
+
+        const reporteSinNormalizar = Object.values(temaData).map(tema => {
             const promedioCalificaciones =
                 tema.totalCalificaciones > 0
                     ? (tema.sumaPuntuaciones / tema.totalCalificaciones).toFixed(2)
@@ -69,23 +71,41 @@ export const getPopularidadTemas = async (req, res) => {
                 100
             ).toFixed(2);
 
-            const indicePopularidad = (
+            const indicePopularidadBruto =
                 (parseFloat(promedioCalificaciones) / 10) * // Calificación máxima es 10
-                parseFloat(porcentajeInscripciones)
-            ).toFixed(2);
+                parseFloat(porcentajeInscripciones);
+
+            totalIndices.push(indicePopularidadBruto);
 
             return {
                 tipo: tema.tipo,
                 descripcion: tema.descripcion,
                 promedioCalificaciones,
                 porcentajeInscripciones: `${porcentajeInscripciones}%`,
-                indicePopularidad: isNaN(indicePopularidad) ? "0.00" : indicePopularidad
+                indicePopularidadBruto: indicePopularidadBruto || 0 // Evitar NaN
+            };
+        });
+
+        const sumaTotalIndices = totalIndices.reduce((sum, indice) => sum + indice, 0);
+
+        const reporteNormalizado = reporteSinNormalizar.map(tema => {
+            const indiceNormalizado =
+                (tema.indicePopularidadBruto / sumaTotalIndices) * 100;
+
+            return {
+                tipo: tema.tipo,
+                descripcion: tema.descripcion,
+                promedioCalificaciones: tema.promedioCalificaciones,
+                porcentajeInscripciones: tema.porcentajeInscripciones,
+                indicePopularidad: `${indiceNormalizado.toFixed(2)}%`
             };
         });
 
         // Ordenar en orden descendente por índice de popularidad
-        const reporteOrdenado = reporte.sort(
-            (a, b) => parseFloat(b.indicePopularidad) - parseFloat(a.indicePopularidad)
+        const reporteOrdenado = reporteNormalizado.sort(
+            (a, b) =>
+                parseFloat(b.indicePopularidad.replace('%', '')) -
+                parseFloat(a.indicePopularidad.replace('%', ''))
         );
 
         res.json(reporteOrdenado);

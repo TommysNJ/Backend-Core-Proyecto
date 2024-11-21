@@ -3,8 +3,9 @@ import CourseModel from "../models/CourseModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
 import CalificacionModel from "../models/CalificacionModel.js";
 
-export const getPopularidadTemas = async (req, res) => {
+export const getReportePopularidadTemas = async (req, res) => {
     try {
+        // Obtener todas las calificaciones con las relaciones necesarias
         const calificaciones = await CalificacionModel.findAll({
             include: [
                 {
@@ -38,23 +39,24 @@ export const getPopularidadTemas = async (req, res) => {
                     descripcion: tema.descripcion,
                     totalCalificaciones: 0,
                     sumaPuntuaciones: 0,
-                    totalInscripciones: 0
+                    totalAlumnos: 0
                 };
             }
 
             const temaEntry = temaData[temaKey];
 
-            // Agregar datos de inscripciones y calificaciones
-            temaEntry.totalInscripciones += 1;
+            // Contar inscripciones por tema
+            temaEntry.totalAlumnos += 1;
 
+            // Sumar calificaciones solo si existen
             if (calificacion.puntuacion !== null) {
                 temaEntry.totalCalificaciones += 1;
                 temaEntry.sumaPuntuaciones += parseFloat(calificacion.puntuacion);
             }
         }
 
-        const totalInscripcionesGlobal = Object.values(temaData).reduce(
-            (sum, tema) => sum + tema.totalInscripciones,
+        const totalAlumnosGlobal = Object.values(temaData).reduce(
+            (sum, tema) => sum + tema.totalAlumnos,
             0
         );
 
@@ -67,7 +69,7 @@ export const getPopularidadTemas = async (req, res) => {
                     : 0;
 
             const porcentajeInscripciones =
-                (tema.totalInscripciones / totalInscripcionesGlobal) * 100;
+                (tema.totalAlumnos / totalAlumnosGlobal) * 100;
 
             const indicePopularidadBruto =
                 (parseFloat(promedioCalificaciones) / 10) * // Calificación máxima es 10

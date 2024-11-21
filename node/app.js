@@ -30,16 +30,16 @@ InstructorModel.hasMany(CourseModel, { foreignKey: 'email_instructor', as: 'curs
 CourseModel.belongsTo(InstructorModel, { foreignKey: 'email_instructor', as: 'instructor' });
 
 // Relación: Curso - Inscripción (1-N)
-CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso' });
-InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso' });
+CourseModel.hasMany(InscriptionModel, { foreignKey: 'id_curso', as: 'inscripciones' });
+InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso', as:'curso' });
 
 // Relación: Tema - Curso (1-N)
 TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', as: 'cursos' });
 CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' });
 
 // Relación: Inscripción - Calificación (1-1)
-InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion' });
-CalificacionModel.belongsTo(InscriptionModel, { foreignKey: 'id_inscripcion' });
+InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion', as:'calificaciones' });
+CalificacionModel.belongsTo(InscriptionModel, { foreignKey: 'id_inscripcion', as:'inscripcion' });
 
 // Relación: Inscripción - Progreso (1-N)
 InscriptionModel.hasMany(ProgresoModel, { foreignKey: 'id_inscripcion' });

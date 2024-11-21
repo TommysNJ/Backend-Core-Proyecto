@@ -3,7 +3,7 @@ import CourseModel from "../models/CourseModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
 import CalificacionModel from "../models/CalificacionModel.js";
 
-export const getReportePopularidadTemas = async (req, res) => {
+export const getPopularidadTemas = async (req, res) => {
     try {
         const calificaciones = await CalificacionModel.findAll({
             include: [
@@ -79,7 +79,7 @@ export const getReportePopularidadTemas = async (req, res) => {
                 descripcion: tema.descripcion,
                 promedioCalificaciones,
                 porcentajeInscripciones: `${porcentajeInscripciones}%`,
-                indicePopularidad
+                indicePopularidad: isNaN(indicePopularidad) ? "0.00" : indicePopularidad
             };
         });
 

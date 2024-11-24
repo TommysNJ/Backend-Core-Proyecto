@@ -23,7 +23,7 @@ import reportRoutes from './routes/reportRoutes.js';
 // Relacionar modelos en app.js
 // Relación: Alumno - Inscripción (1-N)
 AlumnoModel.hasMany(InscriptionModel, { foreignKey: 'email_alumno' });
-InscriptionModel.belongsTo(AlumnoModel, { foreignKey: 'email_alumno'});
+InscriptionModel.belongsTo(AlumnoModel, { foreignKey: 'email_alumno', as: 'alumno'});
 
 // Relación: Instructor - Curso (1-N)
 InstructorModel.hasMany(CourseModel, { foreignKey: 'email_instructor', as: 'cursos' });

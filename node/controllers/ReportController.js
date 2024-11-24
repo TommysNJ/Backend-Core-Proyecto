@@ -1,3 +1,4 @@
+import { Op } from "sequelize"; 
 import TemaModel from "../models/TemaModel.js";
 import CourseModel from "../models/CourseModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
@@ -184,14 +185,16 @@ export const getPorcentajeInscripcionesPorTematica = async (req, res) => {
 
 export const getPopularidadTemasConFiltros = async (req, res) => {
     try {
-        const { genero, rangoEdadInicio, rangoEdadFin } = req.query; // Filtros desde el frontend
+        const { genero, rangoEdadInicio, rangoEdadFin } = req.query;
 
+        // Configuración de filtros condicionales
         const whereAlumno = {};
         if (genero) whereAlumno.genero = genero;
         if (rangoEdadInicio && rangoEdadFin) {
-            whereAlumno.edad = { $between: [parseInt(rangoEdadInicio), parseInt(rangoEdadFin)] };
+            whereAlumno.edad = { [Op.between]: [parseInt(rangoEdadInicio), parseInt(rangoEdadFin)] };
         }
 
+        // Consulta de calificaciones con relaciones
         const calificaciones = await CalificacionModel.findAll({
             include: [
                 {
@@ -221,7 +224,8 @@ export const getPopularidadTemasConFiltros = async (req, res) => {
         const temaData = {};
 
         for (const calificacion of calificaciones) {
-            const tema = calificacion.inscripcion.curso.tema;
+            const tema = calificacion?.inscripcion?.curso?.tema;
+            if (!tema) continue; // Evitar errores si los datos son nulos
             const temaKey = tema.id_tema;
 
             if (!temaData[temaKey]) {

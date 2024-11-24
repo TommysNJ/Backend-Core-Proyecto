@@ -144,7 +144,12 @@ export const getCourseStudents = async (req, res) => {
         const { id_curso } = req.params;
         const inscriptions = await InscriptionModel.findAll({
             where: { id_curso },
-            include: [{ model: AlumnoModel }]
+            include: [
+                { 
+                    model: AlumnoModel,
+                    as: 'alumno'
+                }
+            ]
         });
         res.json(inscriptions);
     } catch (error) {

@@ -20,13 +20,13 @@ permisos específicos, asegurando control de acceso y seguridad.
 
 ***3. Tabla de Contenidos***
 
-	•	Instalación y Ejecución
-	•	Uso del Proyecto
-	•	Rutas y Endpoints
-	•	Roles y Permisos
-	•	Reportes
-	•	Créditos
-	•	Licencia
+- Instalación y Ejecución
+- Uso del Proyecto
+- Rutas y Endpoints
+- Roles y Permisos
+- Reportes
+- Créditos
+- Licencia
 
 ***4. Instalación y Ejecución del Proyecto***
 Para correr este proyecto en tu entorno local, sigue estos pasos:
@@ -53,44 +53,44 @@ Cada tipo de usuario (alumno, instructor, administrador) tiene permisos
 específicos para acceder a ciertas rutas y realizar determinadas operaciones. 
 Los permisos están estructurados de la siguiente manera:
 Alumnos:
-	•	Ver cursos
-	•	Inscribirse
-	•	Registrar su progreso
-	•	Calificar cursos
+- Ver cursos
+- Inscribirse
+- Registrar su progreso
+- Calificar cursos
 Instructores:
-	•	Gestionar los cursos que imparten
-	•	Ver y evaluar el progreso de los alumnos inscritos.
+- Gestionar los cursos que imparten
+- Ver y evaluar el progreso de los alumnos inscritos.
 Administradores:
-	•	Permisos completos para crear, actualizar y eliminar usuarios, cursos, 
+- Permisos completos para crear, actualizar y eliminar usuarios, cursos, 
 temas y subtemáticas.
-	•	Generar reportes.
-	•	Configurar la administración general del sistema.
+- Generar reportes.
+- Configurar la administración general del sistema.
 
 ***6. Rutas y Endpoints Principales***
 Usuarios:
-	•	POST /auth/register: Registro de nuevos usuarios con roles específicos 
+- POST /auth/register: Registro de nuevos usuarios con roles específicos 
 (alumno, instructor).
-	•	GET /alumnos: Obtener la lista completa de alumnos.
-	•	GET /instructores: Obtener la lista completa de instructores.
-	•	DELETE /auth/delete/:email: Eliminar un usuario por su email (solo 
+- GET /alumnos: Obtener la lista completa de alumnos.
+- GET /instructores: Obtener la lista completa de instructores.
+- DELETE /auth/delete/:email: Eliminar un usuario por su email (solo 
 administradores).
 
 Cursos:
-	•	GET /cursos: Obtener todos los cursos disponibles.
-	•	POST /cursos: Crear un nuevo curso (solo administradores).
-	•	GET /cursos/:id: Obtener los detalles de un curso específico.
-	•	PUT /cursos/:id: Actualizar los datos de un curso específico.
-	•	DELETE /cursos/:id: Eliminar un curso (solo administradores).
+- GET /cursos: Obtener todos los cursos disponibles.
+- POST /cursos: Crear un nuevo curso (solo administradores).
+- GET /cursos/:id: Obtener los detalles de un curso específico.
+- PUT /cursos/:id: Actualizar los datos de un curso específico.
+- DELETE /cursos/:id: Eliminar un curso (solo administradores).
 
 Temas y Subtemáticas:
-	•	GET /temas: Listar todos los temas.
-	•	POST /temas: Crear un tema nuevo.
-	•	PUT /temas/:id: Actualizar un tema específico.
-	•	DELETE /temas/:id: Eliminar un tema.
-	•	GET /subtematicas: Listar todas las subtemáticas.
-	•	POST /subtematicas: Crear una nueva subtemática.
-	•	PUT /subtematicas/:id: Actualizar una subtemática específica.
-	•	DELETE /subtematicas/:id: Eliminar una subtemática.
+- GET /temas: Listar todos los temas.
+- POST /temas: Crear un tema nuevo.
+- PUT /temas/:id: Actualizar un tema específico.
+- DELETE /temas/:id: Eliminar un tema.
+- GET /subtematicas: Listar todas las subtemáticas.
+- POST /subtematicas: Crear una nueva subtemática.
+- PUT /subtematicas/:id: Actualizar una subtemática específica.
+- DELETE /subtematicas/:id: Eliminar una subtemática.
 
 Autenticación:
 El sistema utiliza tokens JWT para autenticar a los usuarios en cada 
@@ -101,23 +101,23 @@ protegidas.
 El sistema permite generar diversos reportes útiles para analizar los datos:
 
 Reporte de Popularidad de Temáticas con Calificación:
-	•	Ruta: GET /reports/popularidad-temas
-	•	Muestra las temáticas más populares basadas en inscripciones y 
+- Ruta: GET /reports/popularidad-temas
+- Muestra las temáticas más populares basadas en inscripciones y 
 calificaciones.
 
 Reporte de Porcentaje de Inscripciones por Temática:
-	•	Ruta: GET /reports/porcentaje-inscripciones
-	•	Genera un reporte con el porcentaje de inscripciones por cada temática.
+- Ruta: GET /reports/porcentaje-inscripciones
+- Genera un reporte con el porcentaje de inscripciones por cada temática.
 
 Reporte con Filtros de Calificaciones:
-	•	Ruta: GET /reports/popularidad-temas-filtros
-	•	Permite aplicar filtros de género y rango de edad para analizar 
+- Ruta: GET /reports/popularidad-temas-filtros
+- Permite aplicar filtros de género y rango de edad para analizar 
 popularidad y calificaciones de temáticas.
 
 Reporte de Subtemáticas por Instructor:
-	•	Ruta: GET /reports/popularidad-subtematicas-instructor
-	•	Requiere el parámetro email_instructor en la URL.
-	•	Devuelve las subtemáticas más populares impartidas por un instructor 
+- Ruta: GET /reports/popularidad-subtematicas-instructor
+- Requiere el parámetro email_instructor en la URL.
+- Devuelve las subtemáticas más populares impartidas por un instructor 
 específico.
 
 Ejemplo de uso en Thunder Client (GET todas las subtematicas):

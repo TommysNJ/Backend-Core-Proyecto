@@ -3,6 +3,7 @@ import InstructorModel from "../models/InstructorModel.js";
 import AlumnoModel from "../models/AlumnoModel.js";
 import InscriptionModel from "../models/InscriptionModel.js";
 import TemaModel from "../models/TemaModel.js";
+import SubTemaModel from "../models/SubTemaModel.js"; // añadido defensa
 
 // Crear un curso (solo administrador)
 export const createCourse = async (req, res) => {
@@ -37,6 +38,12 @@ export const getAllCourses = async (req, res) => {
                 {
                     model: TemaModel,
                     as: 'tema',
+                    attributes: ['tipo', 'descripcion']
+                },
+                //añadido defensa
+                {
+                    model: SubTemaModel,
+                    as: 'subtematica', 
                     attributes: ['tipo', 'descripcion']
                 }
             ]
@@ -86,6 +93,12 @@ export const getInstructorCourses = async (req, res) => {
                 {
                     model: TemaModel,
                     as: 'tema',
+                    attributes: ['tipo', 'descripcion']
+                },
+                // añadido defensa
+                {
+                    model: SubTemaModel,
+                    as: 'subtematica', 
                     attributes: ['tipo', 'descripcion']
                 }
             ]

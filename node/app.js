@@ -39,6 +39,10 @@ InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso', as:'curso' });
 TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', as: 'cursos' });
 CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' });
 
+// Relación: Subtemática - Curso (1-N)
+SubTemaModel.hasMany(CourseModel, { foreignKey: 'id_subtematica', as: 'cursos' }); //añadido defensa
+CourseModel.belongsTo(SubTemaModel, { foreignKey: 'id_subtematica', as: 'subtematica' }); //añadido defensa
+
 // Relación: Tema - SubTemática (1-N)
 TemaModel.hasMany(SubTemaModel, { foreignKey: 'id_tema', as: 'subtematicas' }); //añadido defensa
 SubTemaModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' }); //añadido defensa

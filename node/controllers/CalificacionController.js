@@ -4,6 +4,12 @@ import CalificacionModel from "../models/CalificacionModel.js";
 export const rateCourse = async (req, res) => {
     try {
         const { id_inscripcion, puntuacion, descripcion } = req.body;
+        // validación
+        if (puntuacion < 0 || puntuacion > 10) {
+            return res.status(400).json({
+                message: "La puntuación debe estar entre 0 y 10",
+            });
+        }
         await CalificacionModel.create({
             id_inscripcion,
             puntuacion,
@@ -31,6 +37,13 @@ export const updateCalificacion = async (req, res) => {
     try {
         const { id_inscripcion } = req.params;
         const { puntuacion, descripcion } = req.body;
+
+        // validación
+        if (puntuacion < 0 || puntuacion > 10) {
+            return res.status(400).json({
+                message: "La puntuación debe estar entre 0 y 10",
+            });
+        }
 
         // Verificar si existe una calificación asociada a la inscripción
         const calificacion = await CalificacionModel.findOne({ where: { id_inscripcion } });

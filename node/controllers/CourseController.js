@@ -6,10 +6,20 @@ import TemaModel from "../models/TemaModel.js";
 import SubTemaModel from "../models/SubTemaModel.js"; // añadido defensa
 
 // Crear un curso (solo administrador)
-export const createCourse = async (req, res) => {
+/*export const createCourse = async (req, res) => {
     try {
         const { nombre, descripcion, email_instructor, id_tema } = req.body;
         await CourseModel.create({ nombre, descripcion, email_instructor, id_tema });
+        res.json({ message: "Curso creado correctamente" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+//añadido defensa
+export const createCourse = async (req, res) => {
+    try {
+        const { nombre, descripcion, email_instructor, id_tema, id_subtematica } = req.body;
+        await CourseModel.create({ nombre, descripcion, email_instructor, id_tema, id_subtematica });
         res.json({ message: "Curso creado correctamente" });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -129,11 +139,25 @@ export const getInstructorCourses = async (req, res) => {
 };*/
 
 // Editar un curso (solo administrador)
-export const updateCourse = async (req, res) => {
+/*export const updateCourse = async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, descripcion, email_instructor, id_tema } = req.body;
         await CourseModel.update({ nombre, descripcion, email_instructor, id_tema }, { where: { id_curso: id } });
+        res.json({ message: "Curso actualizado correctamente" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};*/
+//añadido defensa
+export const updateCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, descripcion, email_instructor, id_tema, id_subtematica } = req.body;
+        await CourseModel.update(
+            { nombre, descripcion, email_instructor, id_tema, id_subtematica },
+            { where: { id_curso: id } }
+        );
         res.json({ message: "Curso actualizado correctamente" });
     } catch (error) {
         res.status(500).json({ message: error.message });

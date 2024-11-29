@@ -10,6 +10,7 @@ import InscriptionModel from './models/InscriptionModel.js';
 import TemaModel from './models/TemaModel.js';
 import CalificacionModel from './models/CalificacionModel.js';
 import ProgresoModel from './models/ProgresoModel.js';
+import SubTemaModel from './models/SubTemaModel.js'; //añadido defensa
 
 import temaRoutes from './routes/temaRoutes.js';
 import courseRoutes from './routes/courseRoutes.js';
@@ -19,6 +20,7 @@ import inscripcionRoutes from './routes/inscripcionRoutes.js';
 import calificacionRoutes from './routes/calificacionRoutes.js';
 import progresoRoutes from './routes/progresoRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import subtemaRoutes from './routes/subtemaRoutes.js'; //añadido defensa
 
 // Relacionar modelos en app.js
 // Relación: Alumno - Inscripción (1-N)
@@ -36,6 +38,10 @@ InscriptionModel.belongsTo(CourseModel, { foreignKey: 'id_curso', as:'curso' });
 // Relación: Tema - Curso (1-N)
 TemaModel.hasMany(CourseModel, { foreignKey: 'id_tema', as: 'cursos' });
 CourseModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' });
+
+// Relación: Tema - SubTemática (1-N)
+TemaModel.hasMany(SubTemaModel, { foreignKey: 'id_tema', as: 'subtematicas' }); //añadido defensa
+SubTemaModel.belongsTo(TemaModel, { foreignKey: 'id_tema', as: 'tema' }); //añadido defensa
 
 // Relación: Inscripción - Calificación (1-1)
 InscriptionModel.hasOne(CalificacionModel, { foreignKey: 'id_inscripcion', as:'calificaciones' });
@@ -66,6 +72,7 @@ app.use('/inscripciones', inscripcionRoutes);
 app.use('/calificaciones', calificacionRoutes);  // Rutas de calificaciones separadas
 app.use('/progresos', progresoRoutes);  
 app.use('/reports', reportRoutes);
+app.use('/subtematicas', subtemaRoutes); //añadido subtemas
 
 try {
     await db.authenticate();
